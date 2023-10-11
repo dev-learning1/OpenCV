@@ -1,0 +1,52 @@
+동영상 저장하기
+
+cv2.VideoWriter 클래스
+- 원하는 프레임으로 동영상 파일을 저장
+- 프레임은 모두 크기와 데이터 타입이 같아야 함
+
+Fourcc(4-문자 코드, four character code)
+- 동영상 파일의 코덱, 압축파일, 색상, 픽셀 포멧 등을 정의하는 정수 값
+
+✔ 코덱(Codec)
+- coder(코더), decoder(디코더)의 합성어
+- coder(코더) : 부호화, 다른 형태로 변환
+- decoder(디코더) : 복호화, 다시 원래 정보로 되돌리는 것
+
+cv2.VideoWriter_fourcc(*'DIVX') : DIVX MPEG-4 코덱    # 주로 윈도우에서 사용
+
+cv2.VideoWriter(파일이름, fourcc 객체, 초당 프레임수, 프레임 크기(튜플), 컬러(컬러영상 True, 흑백 Fasle))
+
+-------------------------------------------------------
+문제
+1. 두 동영상을 연결하여 저장하기
+(단, 각 첫 동영상의 끝을 2초 자르고, 두번째 영상의 앞을 2초 자름)
+
+- 동영상 객체를 생성
+    while True:
+    => for i in range(전체프레임 - 빼고싶은 프레임수):
+            out.write(frame)
+
+2. 에니메이션 밀기를 구현
+--------------------------------------------------------
+
+이벤트(Event)
+
+1. 키 이벤트
+cv2.waitKey(딜레이)
+딜레이: 밀리초 대기 시간, 0 또는 -(마이너스)인 경우 무한으로 기다림
+
+if cv2.waitKey() == ord('q'):
+    q를 입력했을 경우 실행될 문장
+    ...
+
+2. 마우스 이벤트
+cv2.setMouseCallback(windowName, onMouse, param=None)
+- windowName : 마우스 이벤트 처리를 수행할 창 이름
+- onMouse : 마우스 이벤트 처리를 위한 콜백함수 이름
+    onMouse(event, x, y, flags, param) 와 같은 형식으로 작성
+        event : 마우스 이벤트 종류
+        x : 마우스 이벤트가 발생한 x좌표
+        y : 마우스 이벤트가 발생한 y좌표
+        flags : 마우스 이벤트 발생시 상태
+        param : setMouseCallback() 함수에서 설정한 데이터
+- 콜백함수에 전달할 데이터

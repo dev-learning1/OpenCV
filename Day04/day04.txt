@@ -1,0 +1,129 @@
+영상의 화소처리
+
+화소처리 : 입력 영상의 특정 좌표 픽셀값을 변경하여 출력 영상의 해당 죄표 픽셀값으로 설정하는 연산
+- 결과 영상의 픽셀값이 정해진 범위에 있어야 함
+- 반전, 밝기 조절, 명암비 조절
+
+밝기 조절 : 영상을 전체적으로 밝거나 어둡게 만드는 연산
+
+    cv2.add(src1, src2, dst=None, mask=None, dtype=None)
+    cv2.subtract(src1, src2, dst=None, mask=None, dtype=None)
+        src1 : 입력 첫 번째 영상
+        src2 : 입력 두 번째 영상
+        dst : 출력 덧셈 연산의 결과 영상
+        mask : 마스크 영상
+        dtype : 출력 영상의 타입
+
+dst 함수 인자로 전달
+    dst 크기가 src1, src2 같은 영상, 타입이 동일한 영상
+
+
+✔ 차이 연산
+ - 두 영상의 같은 위치에 존재하는 픽셀값에 대하여 뺄셈 연산을 수행한 후, 그 절대값을 결과 영상의 픽셀값으로 설정
+ - 뻴셈 연산과 달리 입력 영상의 순서에 영향을 받지 않음
+
+    cv2.absdiff(src1, src2, dst=None)
+        src1 : 첫 번째 영상
+        src2 : 두 번째 영상
+        dst : 차이 연산 결과 영상
+
+ cv2.bitwise_and(src1, src2, dst=None, mask=None)
+ cv2.bitwise_or(src1, src2, dst=None, mask=None)
+ cv2.bitwise_xor(src1, src2, dst=None, mask=None)
+ cv2.bitwise_not(src1, dst=None, mask=None)
+ * 각각의 픽셀값을 이진수로 표현하고 비트단위 논리연산을 수행
+
+ AND
+   28     11100
+   25     11001
+ -----------------
+   24     11000
+
+
+ 트랙바(Trackbar)
+ - 프로그램 동작 중 사용자가 지정한 범위안의 값을 선택할 수 있는 컨트롤
+ - OpenCV에서 제공하는 그래픽 사용자 인터페이스
+
+    cv2.createTrackbar(trackbarName, windowName, value, count, onChange)
+        trackbarName : 트랙바 이름
+        windowName : 트랙바를 생성할 창이름
+        value : 트랙바 위치 초기값
+        count : 트랙바 최대값, 최소값은 항상 0
+        onChange : 트랙바 위치가 변경될 때마다 호출될 콜백함수
+
+    콜백함수의 형태 => def onChange(pos):
+
+----------------------------------------------------
+ 문제
+ 트랙바를 이용해 그레이스케일 레벨 표현
+ (단, 영상의 크기는 (480, 640)이며 16단계의 레벨로 표현)
+ ---------------------------------------------------
+
+ OpenCV 컬러 영상
+ - 컬러 영상은 3차원 numpy.ndarray로 표현(img.shape = (h, w, 3))
+ - OpenCV에서는 RGB 순서가 아니라 BGR 순서를 기본으로 사용
+
+    img1 = cv2.imread('cat.bmp', cv2.IMREAD_GRAYSCALE)
+    img2 = cv2.cvtColor(img1, cv2.IMREAD_GRAY2BGR)
+
+    cv2.cvtcolor(src, code, dst=None, dstCn=None)
+        src : 입력 영상
+        code
+            - cv2.COLOR_BGR2GRAY / cv2.COLOR_GRAY2BGR
+            - cv2.COLOR_BGR2RGB /  cv2.COLOR_RGB2BGR
+            - cv2.COLOR_BGR2HSV / cv2.COLOR_HSV2BGR
+            - cv2.COLOR_BGR2YCeCb / cv2.COLOR_YCrCb2BGR
+         dst : 출력 영상
+         dstCn : 채널 수, 0이면 자동
+
+
+ 채널 분리
+    cv2.split(m, mv=None)
+    m : 다채널 영상
+    mv : 출력 영상
+    dst : 출력 영상의 리스트
+
+ 채널 결합
+    cv2.merge(mv, dst=None)
+        mv : 입력 영상 리스트 또는 튜플
+        dst : 출력 영상
+
+ 히스토그램(Histogram)
+- 영상의 픽셀 값 분포를 그래프의 형태로 표현한 것
+- 그레이스케일 영상에서 각 그레이스케일 값에 해당하는 픽셀의 개수를 구하고, 막대 그래프의 형태로 표현
+
+정규화된 히스토그램(Normalized Histogram)
+- 각 픽셀의 개수를 영상 전체 픽셀 개수로 나눠준 것
+- 해당 그레이스케일 값을 갖는 픽셀이 나타날 확률
+
+히스토그램 구하기
+    cv2.calcHist(images, channels, mask, histSize, ranges, hist=None, accumulate=None)
+        images : 입력 영상 리스트
+        channels : 히스토그램을 구할 채널을 나타내는 리스트
+        mask : 마스크 영상, 입력 영상 전체에서 히스토그램을 구하려면 None 지정
+        histSize : 히스토그램 각 차원의 크기를 나타내는 리스트
+        ranges : 히스토그램 각 차원의 최소값과 최대값으로 구성된 리스트
+        hist : 계산된 히스토그램(numpy.ndarray)
+        accumulate : 기존의 hist 히스토그램에 누적하려면 True, 새로 만들려면 False
+
+
+zip()
+- 여러개의 iterable 자료형이 개수가 동일할 때 사용
+- iterable 자료형의 각각의 요소를 나눈 후 순서대로 묶어서 요소 갯수만큼 새로운 iterable 자료형을 생성
+
+✔ iterable 자료형
+리스트, 튜플, 딕셔너리 같이 반복 가능한 자료형들
+
+
+필터링
+- 영상에서 필요한 정보만 통과시키고 원치 않는 정보를 걸러내는 작업
+
+공간적 필터링
+- 영상의 픽셀값을 직접 이용하는 필터링 방법
+- 주로 마스크 연산을 이용함
+(마스크 = 커널(kernal) = 윈도우(window) = 템플릿(templete))
+마스크에 따라서...
+1. 부드럽게
+2. 날카롭게
+3. 에지 검출
+4. 잡음 제거
